@@ -324,7 +324,7 @@ di _n "Download settings:" ///
 
 di _n "Downloading from:"
 foreach file of local reg {
-	di _n _col(30) "`file' (``file'_f'-``file'_t')"
+	di _col(10) "`file' (``file'_f'-``file'_t')"
 
 	** Call API with cURL
 	local url = "https://api.statbank.dk/v1/data/`file'" /// URL to registry´s API
@@ -389,11 +389,11 @@ foreach file of local reg {
 	if "`convert'"=="yes" {
 		if "`area'"=="c_kom" & inlist("`file'", "BEF1", "BEF1A") {
 			local textconvert = `"_n _col(5) "Convert area: From old c_kom (<2007) to new c_kom"""'
-			dkconvert area, from(oldkom) to(newkom) replace assert
+			qui: dkconvert area, from(oldkom) to(newkom) replace assert
 		}
 		if "`area'"=="c_reg" & inlist("`file'", "BEF1", "BEF1A") {
 			local textconvert = `"_n _col(5) "Convert area: From old c_kom (<2007) to c_reg"""'
-			dkconvert area, from(oldkom) to(region) replace assert
+			qui: dkconvert area, from(oldkom) to(region) replace assert
 		}
 
 	}
