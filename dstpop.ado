@@ -193,11 +193,11 @@ if `add'>0 {
 		else {
 			local FOLK1A_f = "2008K1"
 		}
-		if `tyear' <=2020 {
+		if `tyear' <2020 {
 			local FOLK1A_t = "`tyear'K4"
 		}
 		else {
-			local FOLK1A_t = "2020K4"
+			local FOLK1A_t = "2020K2"
 		}
 	}
 	else { // `quarter' only, default is 1
@@ -207,11 +207,17 @@ if `add'>0 {
 		else {
 			local FOLK1A_f = "2008K`quarter'"
 		}
-		if `tyear' <=2020 {
+		if `tyear' <2020 {
 			local FOLK1A_t = "`tyear'K`quarter'"
 		}
 		else {
-			local FOLK1A_t = "2020K`quarter'"
+			if inlist("`quarter'", "3", "4") { // Newest data is 2020K2
+				local FOLK1A_t = "2020K2"
+				di as error "Warning: specified tyear(`tyear') and quarter(`quarter') but newest data are from 2020Q2"
+			}
+			if inlist("`quarter'", "1", "2") {
+				local FOLK1A_t = "2020K`quarter'"
+			}
 		}
 	}
 	local time_FOLK1A = "&Tid=" ///
