@@ -1,10 +1,4 @@
 *! version 1.0.0 11jun2020
-/*** For testing
-clear
-file close _all
-capture: program drop dstpop
-*/
-
 program define dstpop
 version 16.1
 syntax , FYear(real) TYear(real) ///
@@ -458,8 +452,3 @@ if "`convert'"=="yes" {
 	qui: duplicates drop
 }
 end
-/*** For testing
-clear
-gen x=1
-dstpop, clear fyear(2000) tyear(2008) area(c_kom) vallab(value) convert(no) debug //
-*/
