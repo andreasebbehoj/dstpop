@@ -322,8 +322,9 @@ di _n "Download settings:" ///
 	`textconvert' ///
 	`textquarter'
 
+di _n "Downloading from:"
 foreach file of local reg {
-	di _n "Downloading from `file'" _col(30) "(``file'_f'-``file'_t')"
+	di _n _col(30) "`file' (``file'_f'-``file'_t')"
 
 	** Call API with cURL
 	local url = "https://api.statbank.dk/v1/data/`file'" /// URL to registry´s API
