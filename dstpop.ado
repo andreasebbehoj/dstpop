@@ -77,6 +77,7 @@ if mi("`quarter'") {
 * Convert
 if mi("`convert'") & inlist("`area'", "c_kom", "c_reg")==1 {
 	local convert = "yes"
+	local textconvert = `"_n _col(5)  "Convert: `convert'" "'
 }
 * Vallab
 if mi("`vallab'") {
@@ -318,7 +319,8 @@ di _n "Download settings:" ///
 	_n _col(5) "`textage'" ///
 	_n _col(5) "`textsex'" ///
 	_n _col(5) "Value or code: `vallab'" ///
-	_n _col(5) "Convert: `convert'" //
+	`textconvert' ///
+	`textquarter'
 
 foreach file of local reg {
 	di _n "Downloading from `file'" _col(30) "(``file'_f'-``file'_t')"
