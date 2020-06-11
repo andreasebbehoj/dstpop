@@ -1,2 +1,2 @@
 ssc install labutil
-github andreasebbehoj/dkconvert
+github install andreasebbehoj/dkconvert
