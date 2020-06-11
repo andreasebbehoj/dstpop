@@ -7,7 +7,9 @@ capture: program drop dstpop
 
 program define dstpop
 version 16.1
-syntax, FYear(real) TYear(real) [AREA(string) AGE(string) SEX(string) Quarter(real 1.0) VALlab(string) CONVert(string) CLEAR OUTfile(string) DEBUG ]
+syntax , FYear(real) TYear(real) ///
+	[AREA(string) AGE SEX Quarter(numlist integer)] ///
+	[VALlab(string) CONVert(string) OUTfile(string) DEBUG]
 
 *** Check syntax input
 
@@ -31,7 +33,7 @@ local tyear = 2009
 local area = "c_kom" // total, all, c_kom, or c_reg
 local age = "yes" // yes or no (default)
 local sex = "yes" // yes or no (default)
-local quarter = "" // 1 (default), 2, 3, 4 or all. Can only be set if including 2008-2020. 
+local quarter = "" // 1 (default), 2, 3, 4 or 0 (all). Can only be set if including 2008-2020. 
 
 local vallab = "code" // code (default), value or both"
 local outfile = "" // Filename. Default is dstpop_f_t.dta
@@ -45,16 +47,6 @@ if `fyear'<1971 | mi(`fyear') | `tyear'>2020 | mi(`tyear') {
 	di as error "Invalid f() or t() option (from/to year). Must be 1971-2020"
 	exit
 }
-* Age 
-if inlist("`age'", "", "no", "yes")==0 {
-	di as error "Invalid age() option. Specify yes or no (default)"
-	exit
-}
-* Sex
-if inlist("`sex'", "", "no", "yes")==0 {
-	di as error "Invalid sex() option. Specify yes or no (default)"
-	exit
-}
 * Area
 if inlist("`area'", "", "total", "all", "c_kom", "c_reg")==0 {
 	di as error "Invalid area() option. Specify total (default), all, c_kom, or c_reg"
@@ -66,11 +58,7 @@ if inlist("`convert'", "", "no", "yes")==0 {
 	exit
 }
 if "`convert'"=="yes" & inlist("`area'", "c_kom", "c_reg")==0 {
-	di as error "Invalid convert() options. Convert only works when area() is c_kom or c_reg"
-}
-* Debug
-if inlist("`debug'", "", "no", "yes")==0 {
-	di as error "Invalid debug() option. Specify yes or no (default)"
+	di as error "convert(yes) only works when area() is c_kom or c_reg"
 	exit
 }
 * Value or label
@@ -80,11 +68,11 @@ if inlist("`vallab'", "", "code", "value", "both")==0 {
 }
 * q (quarterly population from FOLK1A)
 if !mi("`quarter'"){
-	if inlist("`quarter'", "1", "2", "3", "4", "all")==0{
-		di as error "Invalid q option. Specify 1 (default), 2, 3, 4 or all"
+	if inlist("`quarter'", "1", "2", "3", "4", "0")==0 {
+		di as error "Invalid q option. Specify 1 (default), 2, 3, 4 or 0 (all)"
 		exit
 	}
-	if `fyear'<2008 & `tyear'<2008 {
+	if inlist("`quarter'", "1", "2", "3", "4", "0")==1 & `fyear'<2008 & `tyear'<2008 {
 		di as error "Invalid q option. Quarterly populations is only available from 2008 and onwards"
 		exit
 	}
@@ -97,8 +85,8 @@ if mi("`outfile'") {
 }
 * Quarter
 if mi("`quarter'") {
-	local q = 1
-}
+	local quarter = 1
+	}
 
 *** Define URL input parameters
 
@@ -188,22 +176,38 @@ forvalues x = `fyear'(1)`tyear' {
 }
 if `add'>0 {
 	local reg = "`reg'" + " FOLK1A"
-	if `fyear' >=2008 {
+	if "`quarter'"=="0" { // All quarters
+		if `fyear' >=2008 {
 		local FOLK1A_f = "`fyear'K1"
+		}
+		else {
+			local FOLK1A_f = "2008K1"
+		}
+		if `tyear' <=2020 {
+			local FOLK1A_t = "`tyear'K4"
+		}
+		else {
+			local FOLK1A_t = "2020K4"
+		}
 	}
-	else {
-		local FOLK1A_f = "2008K1"
-	}
-	if `tyear' <=2020 {
-		local FOLK1A_t = "`tyear'K1"
-	}
-	else {
-		local FOLK1A_t = "2020K4"
+	else { // `quarter' only, default is 1
+		if `fyear' >=2008 {
+			local FOLK1A_f = "`fyear'K`quarter'"
+		}
+		else {
+			local FOLK1A_f = "2008K`quarter'"
+		}
+		if `tyear' <=2020 {
+			local FOLK1A_t = "`tyear'K`quarter'"
+		}
+		else {
+			local FOLK1A_t = "2020K`quarter'"
+		}
 	}
 	local time_FOLK1A = "&Tid=" ///
 		+ "%3E%3D" + "`FOLK1A_f'" /// >=
 		+ "%3C%3D" + "`FOLK1A_t'" // <=
-	if "`quarter'"=="all" {
+	if "`quarter'"=="0" {
 		local textquarter = `"_n _col(5)  "Quarter: Q1-Q4 (only 2008-`tyear' in FOLK1A)" "'
 	}
 	else {
@@ -319,7 +323,7 @@ foreach file of local reg {
 		+ "`sex_`file''" /// By sex
 		+ "`placeall'" /// All areas (municipalities, counties, regions and totals)
 		+ "`place_`file''" // By area
-	if "`debug'"=="yes" {
+	if "`debug'"=="debug" {
 		di _n "API call: `url'"
 	}
 	qui: copy "`url'"  "`file'.csv", replace
@@ -330,8 +334,8 @@ foreach file of local reg {
 foreach file of local reg {
 	qui: import delimited "`file'.csv", clear encoding(UTF-8) 
 	* Debug
-	if "`debug'"=="yes" { 
-		di "Import and format `file' (``file'_f' -``file'_t')"
+	if "`debug'"=="debug" { 
+		di "Import and format `file' (``file'_f'-``file'_t')"
 	}
 	else {
 		qui: erase "`file'.csv"
@@ -383,8 +387,8 @@ foreach file of local reg {
 	
 	** Year (only FOLK1A has population for each quarter)
 	if "`file'"=="FOLK1A" {
-		if "`quarter'"=="all" {
-			qui: gen year_q = substr(year, -2, 2)
+		if "`quarter'"=="0" {
+			qui: gen year_q = "Q" + substr(year, -1, 1)
 			label var year_q "Quarter"
 		}
 		else {
@@ -400,7 +404,7 @@ foreach file of local reg {
 	** Append
 	tempfile temp`file'
 	qui: save `temp`file'', replace
-	if "`debug'"=="yes" { // 
+	if "`debug'"=="debug" { // 
 		qui: save "`file'.dta", replace
 	}
 	use "`outfile'", clear
@@ -439,4 +443,4 @@ if "`convert'"=="yes" {
 }
 end
 *** For testing
-dstpop, fyear(1971) tyear(1972) //area(c_kom) age(yes) sex(yes) q(1) debug
+dstpop, debug fyear(2007) tyear(2009) vallab(code) area(c_kom) //age(yes) sex(yes) q(1) debug
