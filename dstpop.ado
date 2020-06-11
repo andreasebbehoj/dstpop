@@ -1,9 +1,9 @@
 *! version 1.0.0 11jun2020
-*** For testing
+/*** For testing
 clear
 file close _all
 capture: program drop dstpop
-
+*/
 
 program define dstpop
 version 16.1
@@ -27,8 +27,8 @@ di _n(2) "INPUTS" ///
 }
 
 ** Check for errors
-* clear 
-if "`c(changed)'"=="1" & "`clear'"!="clear" { 
+* clear
+if "`c(changed)'"=="1" & "`clear'"!="clear" {
 	error 4 // dataset in memory changed
 }
 else {
@@ -83,7 +83,7 @@ if mi("`quarter'") {
 * Convert
 if mi("`convert'") & inlist("`area'", "c_kom", "c_reg")==1 {
 	local convert = "yes"
-}	
+}
 * Vallab
 if mi("`vallab'") {
 	local vallab = "code"
@@ -110,7 +110,7 @@ if "`debug'"=="debug" {
 local add = 0
 forvalues x = `fyear'(1)`tyear' {
 	if inrange(`x', 1971, 2002) {
-		local add = `add' + 1 
+		local add = `add' + 1
 	}
 }
 if `add'>0 {
@@ -136,7 +136,7 @@ if `add'>0 {
 local add = 0
 forvalues x = `fyear'(1)`tyear' {
 	if inrange(`x', 2003, 2004) {
-		local add = `add' + 1 
+		local add = `add' + 1
 	}
 }
 if `add'>0 {
@@ -161,7 +161,7 @@ if `add'>0 {
 local add = 0
 forvalues x = `fyear'(1)`tyear' {
 	if inrange(`x', 2005, 2007) {
-		local add = `add' + 1 
+		local add = `add' + 1
 	}
 }
 if `add'>0 {
@@ -186,7 +186,7 @@ if `add'>0 {
 local add = 0
 forvalues x = `fyear'(1)`tyear' {
 	if inrange(`x', 2008, 2020) {
-		local add = `add' + 1 
+		local add = `add' + 1
 	}
 }
 if `add'>0 {
@@ -234,18 +234,18 @@ if `add'>0 {
 ** Age
 if "`age'"=="age" {
 	local textage = "Age: by age (0-98, +99 combined)"
-	
+
 	local age_BEF1 = "&Alder=%3E=0%3C=99-" // BEF1 has age 0 to 99-
-	
+
 	local age_BEF1A = "&Alder=%3E=0%3C=98," + /// 0-98
 "sum(99-|[da%2099-%20%C3%A5r][en%2099-%20years]=99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125)" // 99-125 combined to 99-
-	
+
 	local age_BEF1A07 = "&Alder=%3E=0%3C=98," + /// 0-98
 "sum(99-|[da%2099-%20%C3%A5r][en%2099-%20years]=99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125)" // 99-125 combined to 99-
-	
+
 	local age_FOLK1A = "&Alder=%3E=0%3C=98," + /// 0-98
 "sum(99-|[da%2099-%20%C3%A5r][en%2099-%20years]=99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125)" // 99-125 combined to 99-
-	
+
 }
 
 else {
@@ -280,26 +280,26 @@ if "`area'"=="all" {
 * All municipalities
 if "`area'"=="c_kom" {
 	local textplace = "Area: All municipalities"
-	
+
 	local place_BEF1 = "&Omr%C3%A5de=" + subinstr("101 147 165 151 153 155 157 159 161 163 167 169 183 171 173 175 181 185 187 189 201 205 207 208 209 211 213 215 217 219 221 223 225 227 229 231 233 235 237 251 253 255 257 259 261 263 265 267 269 271 301 303 305 307 309 311 313 315 317 319 321 323 325 327 329 331 333 335 337 339 341 343 345 351 353 355 357 359 361 363 365 367 369 371 373 375 377 379 381 383 385 387 389 391 393 395 397 401 403 405 407 409 411 421 423 425 427 429 431 433 435 437 439 441 443 445 447 449 451 461 471 473 475 477 479 481 483 485 487 489 491 492 493 495 497 499 501 503 505 507 509 511 513 515 517 519 521 523 525 527 529 531 533 535 537 539 541 543 545 551 553 555 557 559 561 563 565 567 569 571 573 575 577 601 603 605 607 609 611 613 615 617 619 621 623 625 627 629 631 651 653 655 657 659 661 663 665 667 669 671 673 675 677 679 681 683 685 701 703 705 707 709 711 713 715 717 719 721 723 725 727 729 731 733 735 737 739 741 743 745 747 749 751 761 763 765 767 769 771 773 775 777 779 781 783 785 787 789 791 793 801 803 805 807 809 811 813 815 817 819 821 823 825 827 829 831 833 835 837 839 841 843 845 847 849 851 861", " ", "%2C", .) // 400 was Bornholm County up to 2002
-	
+
 	local place_BEF1A = "&Omr%C3%A5de=" + subinstr("101 147 165 151 153 155 157 159 161 163 167 169 183 171 173 175 181 185 187 189 201 205 207 208 209 211 213 215 217 219 221 223 225 227 229 231 233 235 237 251 253 255 257 259 261 263 265 267 269 271 301 303 305 307 309 311 313 315 317 319 321 323 325 327 329 331 333 335 337 339 341 343 345 351 353 355 357 359 361 363 365 367 369 371 373 375 377 379 381 383 385 387 389 391 393 395 397 400 411 421 423 425 427 429 431 433 435 437 439 441 443 445 447 449 451 461 471 473 475 477 479 481 483 485 487 489 491 492 493 495 497 499 501 503 505 507 509 511 513 515 517 519 521 523 525 527 529 531 533 535 537 539 541 543 545 551 553 555 557 559 561 563 565 567 569 571 573 575 577 601 603 605 607 609 611 613 615 617 619 621 623 625 627 629 631 651 653 655 657 659 661 663 665 667 669 671 673 675 677 679 681 683 685 701 703 705 707 709 711 713 715 717 719 721 723 725 727 729 731 733 735 737 739 741 743 745 747 749 751 761 763 765 767 769 771 773 775 777 779 781 783 785 787 789 791 793 801 803 805 807 809 811 813 815 817 819 821 823 825 827 829 831 833 835 837 839 841 843 845 847 849 851 861", " ", "%2C", .) // 401 403 405 407 and 409 was combined into Bornholm Municipality 400 in 2003
-	
+
 	local place_BEF1A07 = "&Omr%C3%A5de=" + subinstr("101 147 155 185 165 151 153 157 159 161 163 167 169 183 173 175 187 201 240 210 250 190 270 260 217 219 223 230 400 411 253 259 350 265 269 320 376 316 326 360 370 306 329 330 340 336 390 420 430 440 482 410 480 450 461 479 492 530 561 563 607 510 621 540 550 573 575 630 580 710 766 615 707 727 730 741 740 746 706 751 657 661 756 665 760 779 671 791 810 813 860 849 825 846 773 840 787 820 851", " ", "%2C", .)
-	
+
 	local place_FOLK1A = "&Omr%C3%A5de=" + subinstr("101 147 155 185 165 151 153 157 159 161 163 167 169 183 173 175 187 201 240 210 250 190 270 260 217 219 223 230 400 411 253 259 350 265 269 320 376 316 326 360 370 306 329 330 340 336 390 420 430 440 482 410 480 450 461 479 492 530 561 563 607 510 621 540 550 573 575 630 580 710 766 615 707 727 730 741 740 746 706 751 657 661 756 665 760 779 671 791 810 813 860 849 825 846 773 840 787 820 851", " ", "%2C", .)
 }
 
 * All regions
 if "`area'"=="c_reg" {
 	local textplace = "Area: All regions"
-	
+
 	local place_BEF1 = "&Omr%C3%A5de=" + subinstr("101 147 165 151 153 155 157 159 161 163 167 169 183 171 173 175 181 185 187 189 201 205 207 208 209 211 213 215 217 219 221 223 225 227 229 231 233 235 237 251 253 255 257 259 261 263 265 267 269 271 301 303 305 307 309 311 313 315 317 319 321 323 325 327 329 331 333 335 337 339 341 343 345 351 353 355 357 359 361 363 365 367 369 371 373 375 377 379 381 383 385 387 389 391 393 395 397 401 403 405 407 409 411 421 423 425 427 429 431 433 435 437 439 441 443 445 447 449 451 461 471 473 475 477 479 481 483 485 487 489 491 492 493 495 497 499 501 503 505 507 509 511 513 515 517 519 521 523 525 527 529 531 533 535 537 539 541 543 545 551 553 555 557 559 561 563 565 567 569 571 573 575 577 601 603 605 607 609 611 613 615 617 619 621 623 625 627 629 631 651 653 655 657 659 661 663 665 667 669 671 673 675 677 679 681 683 685 701 703 705 707 709 711 713 715 717 719 721 723 725 727 729 731 733 735 737 739 741 743 745 747 749 751 761 763 765 767 769 771 773 775 777 779 781 783 785 787 789 791 793 801 803 805 807 809 811 813 815 817 819 821 823 825 827 829 831 833 835 837 839 841 843 845 847 849 851 861", " ", "%2C", .)
-	
+
 	local place_BEF1A = "&Omr%C3%A5de=" + subinstr("101 147 165 151 153 155 157 159 161 163 167 169 183 171 173 175 181 185 187 189 201 205 207 208 209 211 213 215 217 219 221 223 225 227 229 231 233 235 237 251 253 255 257 259 261 263 265 267 269 271 301 303 305 307 309 311 313 315 317 319 321 323 325 327 329 331 333 335 337 339 341 343 345 351 353 355 357 359 361 363 365 367 369 371 373 375 377 379 381 383 385 387 389 391 393 395 397 400 411 421 423 425 427 429 431 433 435 437 439 441 443 445 447 449 451 461 471 473 475 477 479 481 483 485 487 489 491 492 493 495 497 499 501 503 505 507 509 511 513 515 517 519 521 523 525 527 529 531 533 535 537 539 541 543 545 551 553 555 557 559 561 563 565 567 569 571 573 575 577 601 603 605 607 609 611 613 615 617 619 621 623 625 627 629 631 651 653 655 657 659 661 663 665 667 669 671 673 675 677 679 681 683 685 701 703 705 707 709 711 713 715 717 719 721 723 725 727 729 731 733 735 737 739 741 743 745 747 749 751 761 763 765 767 769 771 773 775 777 779 781 783 785 787 789 791 793 801 803 805 807 809 811 813 815 817 819 821 823 825 827 829 831 833 835 837 839 841 843 845 847 849 851 861", " ", "%2C", .)
-	
+
 	local place_BEF1A07 = "&Omr%C3%A5de=" + subinstr("081 082 083 084 085", " ", "%2C", .)
-	
+
 	local place_FOLK1A = "&Omr%C3%A5de=" + subinstr("081 082 083 084 085", " ", "%2C", .)
 }
 
@@ -330,7 +330,7 @@ foreach file of local reg {
 	di _n "Downloading from `file'" _col(30) "(``file'_f'-``file'_t')"
 
 	** Call API with cURL
-	local url = "https://api.statbank.dk/v1/data/`file'" /// URL to registry´s API 
+	local url = "https://api.statbank.dk/v1/data/`file'" /// URL to registry´s API
 		+ "/CSV?" /// csv format
 		+ "lang=en" ///
 		+ "`value'" /// Value, code or both
@@ -348,9 +348,9 @@ foreach file of local reg {
 
 *** Import and format files
 foreach file of local reg {
-	qui: import delimited "`file'.csv", clear encoding(UTF-8) 
+	qui: import delimited "`file'.csv", clear encoding(UTF-8)
 	* Debug
-	if "`debug'"=="debug" { 
+	if "`debug'"=="debug" {
 		di _n "Import and format `file' (``file'_f'-``file'_t')"
 	}
 	else {
@@ -367,40 +367,40 @@ foreach file of local reg {
 	capture: rename indhold pop
 	capture: label var pop "Population"
 	capture: rename område area
-	
+
 	** Age
 	if "`vallab'"=="code" {
 		capture: replace age = subinstr(age, "-", "", 1) // Remove - from 99-
 		capture: destring age, replace
 	}
-	
+
 	if "`area'"=="c_kom" {
 		capture: label var area "Municipality"
 	}
 	if "`area'"=="c_reg" {
 		capture: label var area "Region"
 	}
-	
+
 	** Sex
 	if "`sex'"=="sex" & inlist("`file'", "BEF1", "BEF1A", "BEF1A07") & "`vallab'"=="code" {
 		capture: replace sex = "1" if sex=="M"
 		capture: replace sex = "2" if sex=="K"
 		capture: destring sex, replace
 	}
-	
+
 	** Convert area (only BEF1 and BEF1A)
 	if "`convert'"=="yes" {
 		if "`area'"=="c_kom" & inlist("`file'", "BEF1", "BEF1A") {
 			local textconvert = `"_n _col(5) "Convert area: From old c_kom (<2007) to new c_kom"""'
 			dkconvert area, from(oldkom) to(newkom) replace assert
 		}
-		if "`area'"=="c_reg" & inlist("`file'", "BEF1", "BEF1A") { 
+		if "`area'"=="c_reg" & inlist("`file'", "BEF1", "BEF1A") {
 			local textconvert = `"_n _col(5) "Convert area: From old c_kom (<2007) to c_reg"""'
 			dkconvert area, from(oldkom) to(region) replace assert
 		}
-		
+
 	}
-	
+
 	** Year (only FOLK1A has population for each quarter)
 	if "`file'"=="FOLK1A" {
 		if "`quarter'"=="0" {
@@ -410,17 +410,17 @@ foreach file of local reg {
 		else {
 			qui: keep if substr(year, -1, 1)=="`quarter'"
 		}
-		
+
 		if inlist("`vallab'", "code", "value") {
 			qui: replace year = substr(year, -6, 4)
 			qui: destring year, replace
 			}
 	}
-	
+
 	** Append
 	tempfile import`file'
 	qui: save `import`file'', replace
-	if "`debug'"=="debug" { // 
+	if "`debug'"=="debug" { //
 		qui: save "`file'.dta", replace
 	}
 	use "`outfile'", clear
@@ -443,7 +443,7 @@ if "`age'"=="age" & "`vallab'"=="code" {
 
 *** Combine converted area
 if "`convert'"=="yes" {
-	qui: ds year area pop, not 
+	qui: ds year area pop, not
 	local bysortlist = "`r(varlist)'"
 	if !mi("`bysortlist'") {
 		di _n "Combined populations by: year area `bysortlist'"
@@ -458,7 +458,8 @@ if "`convert'"=="yes" {
 	qui: duplicates drop
 }
 end
-*** For testing
+/*** For testing
 clear
 gen x=1
 dstpop, clear fyear(2000) tyear(2008) area(c_kom) vallab(value) convert(no) debug //
+*/
