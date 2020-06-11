@@ -1,0 +1,11 @@
+v 1.0.0
+d dstpop
+d by Andreas Ebbehoj
+d Aarhus University
+d andebb@clin.au.dk
+d Find documentation at:
+l https://github.com/andreasebbehoj/dstpop
+
+d 'dstpop': Import Danish population from DST since 1971 by year, sex, age, and area.
+
+p dstpop
