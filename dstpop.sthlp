@@ -16,7 +16,8 @@
 [{cmd:sex}]
 [{cmd:age}]
 [{cmd:area}({it:val_opt})]
-{cmd:convert}()
+[{cmd:clear}]
+{cmd:convert}({it:conv_opt})
 [{it:other options}]
 
 {synoptset 20 tabbed}{...}
@@ -27,19 +28,21 @@
 {synopt:{opt ty:ear}}... to {it:year} (range 1971-2020) {p_end}
 {syntab:Population by (optional)}
 {synopt:{opt sex}}get population by sex.{p_end}
-{synopt:{opt age}}get population by age (1-year intervals 0-98, 99-125 combined into 99+).{p_end}
-{p2coldent:* {opt area}({it:area_opt})}get population by area, where {it:area_opt} can be {it:total} (default), {it:c_kom} (by municipality), {it:c_reg} (by region), or {it:all} (municipality, county, and region #). {p_end}
+{synopt:{opt age}}get population by age.{p_end}
+{p2coldent:* {opt area}({it:area_opt})}get population by area, where {it:area_opt} can be {it:total} (default), {it:c_kom} (by municipality), {it:c_reg} (by region), or {it:all} (municipality, county, and region) ~. {p_end}
 {synoptline}
 {syntab:Other options}
 {synopt:{opt clear}}specifies that it is okay to replace the data in memory, even though the current data have not been saved to disk.{p_end}
-{p2coldent:* {opt conv:ert}} {p_end}
-{p2coldent:* {opt val:lab}({it:val_opt})} {it:total}|{it:c_kom}|{it:c_reg}|{it:all}{p_end}
-{synopt:{opt q:uarter}} {p_end}
+{p2coldent:* {opt conv:ert}({it:conv_opt})}specify if pre-2007 municipalities should be converted and combined in new municipalities/regions, where {it:conv_opt} can be {it:yes} (default) or {it:no}.{p_end}
+{p2coldent:* {opt val:lab}({it:val_opt})}return sex/age/area in {it:code} (default), {it:values}, or {it:both}.{p_end}
+{p2coldent:^ {opt q:uarter}({it:int})}specifies which quarter to get population for, where {it:int} can be 1-4 or 0 (for all). Default is Q1 {p_end}
 {synopt:{opt debug}}make program output more detailed. Enable to trouble-shoot program.{p_end}
 {synoptline}
 {p2colreset}{...}
-{p 4 6 2} * {opt conv:ert} does not work if {opt val:lab}({it:val_opt}) is set to {it:value} or {it:both} or if {opt area}({it:area_opt}) is set to {it:all}.{p_end}
-{p 4 6 2} # {opt area}({it:all}) provide population by old municipalities and counties 1971-2004 and new municipalities and region 2005-2020 (not recommended).
+{p 4 6 2} * {opt conv:ert} does not work if {opt val:lab}({it:value|both}) or if {opt area}({it:all}).{p_end}
+{p 4 6 2} ~ Old municipalities and counties are available 1971-2004 and new municipalities and regions are available 2005-2020.{p_end}
+{p 4 6 2} ^ Quarterly populations are only available since 2008.{p_end}
+
 
 
 {title:Description}
@@ -95,9 +98,6 @@ Population 2000-2020 by sex and age
 Population 1971-2020 by sex, age, and municipality (large file!)
 . dstpop, fy(1971) ty(2020) sex age area(c_kom) clear
 
-syntax , FYear(real) TYear(real) ///
-	[AREA(string) AGE SEX Quarter(numlist integer)] ///
-	[VALlab(string) CONVert(string) DEBUG CLEAR]
 
 {title:Author}
 
