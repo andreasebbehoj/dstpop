@@ -6,6 +6,6 @@ d andebb@clin.au.dk
 d Find documentation at:
 l https://github.com/andreasebbehoj/dstpop
 
-d 'dstpop': Import Danish population from DST since 1971 by year, sex, age, and area.
+d 'dstpop': Import Danish population by year, sex, age, and area, using Statistics Denmark's API
 
 p dstpop

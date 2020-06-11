@@ -1,2 +1,3 @@
 # dstpop
- Stata program for importing Danish population from Statistics Denmark (DST or "Danmarks Statistik") since 1971 by year, sex, age, and area.
+ Stata program for importing the Danish population by year, sex, age, and area, using Statistics Denmark's API.
+ 
