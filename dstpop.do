@@ -9,11 +9,12 @@ program define dstpop
 version 16.1
 syntax , FYear(real) TYear(real) ///
 	[AREA(string) AGE SEX Quarter(numlist integer)] ///
-	[VALlab(string) CONVert(string) OUTfile(string) DEBUG]
+	[VALlab(string) CONVert(string) OUTfile(string) DEBUG CLEAR]
 
 *** Check syntax input
-
-di "FY: `fyear'" ///
+if "`debug'"=="debug" {
+di _n(2) "INPUTS" ///
+	_n "FY: `fyear'" ///
 	_n "TY: `tyear'" ///
 	_n "Area: `area'" ///
 	_n "Age: `age'" ///
@@ -22,26 +23,16 @@ di "FY: `fyear'" ///
 	_n "Vallab: `vallab'" ///
 	_n "Convert: `convert'" ///
 	_n "Clear: `clear'" ///
-	_n `"Outfile `outfile'"' ///
+	_n `"Outfile: `outfile'"' ///
 	_n "Debug: `debug'"
-	
+}
 
-*** Program input
-/*
-local fyear = 2004
-local tyear = 2009
-local area = "c_kom" // total, all, c_kom, or c_reg
-local age = "yes" // yes or no (default)
-local sex = "yes" // yes or no (default)
-local quarter = "" // 1 (default), 2, 3, 4 or 0 (all). Can only be set if including 2008-2020. 
-
-local vallab = "code" // code (default), value or both"
-local outfile = "" // Filename. Default is dstpop_f_t.dta
-local convert = "yes" // Yes or no (default). Convert old pre2007 c_kom values to new c_kom/c_reg and combine populations. 
-local debug = "yes" // Yes or no (default)
-*/
-*** General settings
 ** Check for errors
+* clear 
+if "`c(changed)'"=="1" & "`clear'"!="clear" { 
+	error 4 // dataset in memory changed
+}
+
 * Time period
 if `fyear'<1971 | mi(`fyear') | `tyear'>2020 | mi(`tyear') {
 	di as error "Invalid f() or t() option (from/to year). Must be 1971-2020"
@@ -78,7 +69,7 @@ if !mi("`quarter'"){
 	}
 }
 
-** Set blank options
+** Set empty options to default
 * Outfile name
 if mi("`outfile'") {
 		local outfile = "dstpop_`fyear'_`tyear'.dta"
@@ -86,9 +77,32 @@ if mi("`outfile'") {
 * Quarter
 if mi("`quarter'") {
 	local quarter = 1
-	}
+}
+* Convert
+if mi("`convert'") & inlist("`area'", "c_kom", "c_reg")==1 {
+	local convert = "yes"
+}	
+* Vallab
+if mi("`vallab'") {
+	local vallab = "code"
+}
 
-*** Define URL input parameters
+
+*** Define API (URL) input parameters
+if "`debug'"=="debug" {
+	di _n(2) "INPUTS (after default added)" ///
+		_n "FY: `fyear'" ///
+		_n "TY: `tyear'" ///
+		_n "Area: `area'" ///
+		_n "Age: `age'" ///
+		_n "Sex: `sex'" ///
+		_n "Quarter: `quarter'" ///
+		_n "Vallab: `vallab'" ///
+		_n "Convert: `convert'" ///
+		_n "Clear: `clear'" ///
+		_n `"Outfile: `outfile'"' ///
+		_n "Debug: `debug'"
+}
 
 ** Registries and year range
 * BEF1 1971-2002
@@ -217,7 +231,7 @@ if `add'>0 {
 
 
 ** Age
-if "`age'"=="yes" {
+if "`age'"=="age" {
 	local textage = "Age: by age (0-98, +99 combined)"
 	
 	local age_BEF1 = "&Alder=%3E=0%3C=99-" // BEF1 has age 0 to 99-
@@ -239,7 +253,7 @@ else {
 
 
 ** Sex
-if "`sex'"=="yes" {
+if "`sex'"=="sex" {
 	local textsex = "Sex: By sex"
 	local sex_BEF1 = "&K%C3%98N=M%2CK" // køn=M,K
 	local sex_BEF1A = "&KOEN=M%2CK" // koen=M,K
@@ -308,6 +322,7 @@ di _n "Download settings:" ///
 	_n _col(5) "`textage'" ///
 	_n _col(5) "`textsex'" ///
 	_n _col(5) "Value or code: `vallab'" ///
+	_n _col(5) "Convert: `convert'" ///
 	_n _col(5) `"Save as "`outfile'""'
 
 foreach file of local reg {
@@ -335,7 +350,7 @@ foreach file of local reg {
 	qui: import delimited "`file'.csv", clear encoding(UTF-8) 
 	* Debug
 	if "`debug'"=="debug" { 
-		di "Import and format `file' (``file'_f'-``file'_t')"
+		di _n "Import and format `file' (``file'_f'-``file'_t')"
 	}
 	else {
 		qui: erase "`file'.csv"
@@ -366,7 +381,7 @@ foreach file of local reg {
 	}
 	
 	** Sex
-	if "`sex'"=="yes" & inlist("`file'", "BEF1", "BEF1A", "BEF1A07") & "`vallab'"=="code" {
+	if "`sex'"=="sex" & inlist("`file'", "BEF1", "BEF1A", "BEF1A07") & "`vallab'"=="code" {
 		capture: replace sex = "1" if sex=="M"
 		capture: replace sex = "2" if sex=="K"
 		capture: destring sex, replace
@@ -415,12 +430,12 @@ foreach file of local reg {
 
 
 *** Add value labels
-if "`sex'"=="yes" & "`vallab'"=="code" {
+if "`sex'"=="sex" & "`vallab'"=="code" {
 	label define _sex 1 "Men" 2 "Women", replace
 	label value sex _sex
 }
 
-if "`age'"=="yes" & "`vallab'"=="code" {
+if "`age'"=="age" & "`vallab'"=="code" {
 	label define _age 99 "99+", replace
 	label value age _age
 }
@@ -430,11 +445,11 @@ if "`convert'"=="yes" {
 	qui: ds year area pop, not 
 	local bysortlist = "`r(varlist)'"
 	if !mi("`bysortlist'") {
-		di "Combined populations by: year area `bysortlist'"
+		di _n "Combined populations by: year area `bysortlist'"
 		qui: bysort year area `bysortlist': egen totalpop=total(pop)
 	}
 	else {
-		di "Combined populations by: year area"
+		di _n "Combined populations by: year area"
 		qui: bysort year area: egen totalpop=total(pop)
 	}
 	qui: replace pop = totalpop
@@ -443,4 +458,5 @@ if "`convert'"=="yes" {
 }
 end
 *** For testing
-dstpop, debug fyear(2007) tyear(2009) vallab(code) area(c_kom) //age(yes) sex(yes) q(1) debug
+
+dstpop, debug fyear(2000) tyear(2008) area(c_kom) convert(yes) vallab(code) //
