@@ -9,7 +9,7 @@ program define dstpop
 version 16.1
 syntax , FYear(real) TYear(real) ///
 	[AREA(string) AGE SEX Quarter(numlist integer)] ///
-	[VALlab(string) CONVert(string) OUTfile(string) DEBUG CLEAR]
+	[VALlab(string) CONVert(string) DEBUG CLEAR]
 
 *** Check syntax input
 if "`debug'"=="debug" {
@@ -23,7 +23,6 @@ di _n(2) "INPUTS" ///
 	_n "Vallab: `vallab'" ///
 	_n "Convert: `convert'" ///
 	_n "Clear: `clear'" ///
-	_n `"Outfile: `outfile'"' ///
 	_n "Debug: `debug'"
 }
 
@@ -31,6 +30,9 @@ di _n(2) "INPUTS" ///
 * clear 
 if "`c(changed)'"=="1" & "`clear'"!="clear" { 
 	error 4 // dataset in memory changed
+}
+else {
+	clear
 }
 
 * Time period
@@ -57,6 +59,10 @@ if inlist("`vallab'", "", "code", "value", "both")==0 {
 	di as error "Invalid vallab() option. Specify code (default), value, or both"
 	exit
 }
+if inlist("`vallab'", "value", "both") & inlist("`convert'", "yes", "") {
+	di as error "Invalid combination of vallab() and convert() options." _n "vallab(value|both) only works with convert(no)." _n "Either change vallab to code (recommended) or convert to no"
+	exit
+}
 * q (quarterly population from FOLK1A)
 if !mi("`quarter'"){
 	if inlist("`quarter'", "1", "2", "3", "4", "0")==0 {
@@ -70,10 +76,6 @@ if !mi("`quarter'"){
 }
 
 ** Set empty options to default
-* Outfile name
-if mi("`outfile'") {
-		local outfile = "dstpop_`fyear'_`tyear'.dta"
-}
 * Quarter
 if mi("`quarter'") {
 	local quarter = 1
@@ -100,7 +102,6 @@ if "`debug'"=="debug" {
 		_n "Vallab: `vallab'" ///
 		_n "Convert: `convert'" ///
 		_n "Clear: `clear'" ///
-		_n `"Outfile: `outfile'"' ///
 		_n "Debug: `debug'"
 }
 
@@ -314,6 +315,7 @@ if "`vallab'"=="both" {
 }
 
 *** Download from registries
+tempfile outfile
 qui: save "`outfile'", replace empty
 di _n "Download settings:" ///
 	_n _col(5) "Time: `fyear'-`tyear'" `textquarter' ///
@@ -322,8 +324,7 @@ di _n "Download settings:" ///
 	_n _col(5) "`textage'" ///
 	_n _col(5) "`textsex'" ///
 	_n _col(5) "Value or code: `vallab'" ///
-	_n _col(5) "Convert: `convert'" ///
-	_n _col(5) `"Save as "`outfile'""'
+	_n _col(5) "Convert: `convert'" //
 
 foreach file of local reg {
 	di _n "Downloading from `file'" _col(30) "(``file'_f'-``file'_t')"
@@ -417,13 +418,13 @@ foreach file of local reg {
 	}
 	
 	** Append
-	tempfile temp`file'
-	qui: save `temp`file'', replace
+	tempfile import`file'
+	qui: save `import`file'', replace
 	if "`debug'"=="debug" { // 
 		qui: save "`file'.dta", replace
 	}
 	use "`outfile'", clear
-	append using `temp`file'', force
+	append using `import`file'', force
 	capture: order year_q, after(year)
 	qui: save "`outfile'", replace
 }
@@ -458,5 +459,6 @@ if "`convert'"=="yes" {
 }
 end
 *** For testing
-
-dstpop, debug fyear(2000) tyear(2008) area(c_kom) convert(yes) vallab(code) //
+clear
+gen x=1
+dstpop, clear fyear(2000) tyear(2008) area(c_kom) vallab(value) convert(no) debug //
