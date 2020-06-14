@@ -90,7 +90,7 @@ Population 2000-2020 by each region
 . dstpop, fy(2000) ty(2020) area(c_reg) clear
 
 Population 1977-1990 in the old municipalities (pre-2007)
-. dstpop, fy(1977) ty(1990) area(c_reg) convert(no) clear
+. dstpop, fy(1977) ty(1990) area(c_kom) convert(no) clear
 
 Population 2000-2020 by sex and age
 . dstpop, fy(2000) ty(2020) sex age clear
