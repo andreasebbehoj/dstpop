@@ -1,4 +1,4 @@
-*! version 1.0.1 15jun2020
+*! version 1.0.2 15jun2020
 program define dstpop
 version 16.1
 syntax , FYear(real) TYear(real) ///
