@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 1.0.0  11jun2020}{...}
+{* *! version 1.0.1  15jun2020}{...}
 {title:dstpop}
 
 {phang}
@@ -17,7 +17,6 @@
 [{cmd:age}]
 [{cmd:area}({it:val_opt})]
 [{cmd:clear}]
-{cmd:convert}({it:conv_opt})
 [{it:other options}]
 
 {synoptset 20 tabbed}{...}
@@ -33,16 +32,15 @@
 {synoptline}
 {syntab:Other options}
 {synopt:{opt clear}}specifies that it is okay to replace the data in memory, even though the current data have not been saved to disk.{p_end}
-{p2coldent:* {opt conv:ert}({it:conv_opt})}specify if pre-2007 municipalities should be converted and combined in new municipalities/regions, where {it:conv_opt} can be {it:yes} (default) or {it:no}.{p_end}
 {p2coldent:* {opt val:lab}({it:val_opt})}return sex/age/area in {it:code} (default), {it:values}, or {it:both}.{p_end}
+{p2coldent:* {opt noconvert}}disables convertion of pre-2007 municipalities into in new municipalities/regions.{p_end}
 {p2coldent:^ {opt q:uarter}({it:int})}specifies which quarter to get population for, where {it:int} can be 1-4 or 0 (for all). Default is Q1 {p_end}
 {synopt:{opt debug}}make program output more detailed. Enable to trouble-shoot program.{p_end}
 {synoptline}
 {p2colreset}{...}
-{p 4 6 2} * {opt conv:ert} does not work if {opt val:lab}({it:value|both}) or if {opt area}({it:all}).{p_end}
+{p 4 6 2} * Old municipalities cannot be converted into new municipalities or regions for {opt val:lab}({it:value}|{it:both}) and {opt area}({it:all}). Either change to {opt val:lab}({it:code}) and {opt area}({it:c_kom}|{it:c_reg}) or specify {opt noconvert} to disable convertion.{p_end}
 {p 4 6 2} ~ Old municipalities and counties are available 1971-2004 and new municipalities and regions are available 2005-2020.{p_end}
 {p 4 6 2} ^ Quarterly populations are only available since 2008.{p_end}
-
 
 
 {title:Description}
@@ -64,18 +62,20 @@ DST's API is documented {browse "https://www.dst.dk/da/Statistik/statistikbanken
 
 
 {title:Dependencies}
-{cmd:dstpop} requires {cmd:dkconvert} for the {opt conv:ert} option to work.
+{cmd:dstpop} requires {cmd:dkconvert} to convert old municipalities.
 
-{cmd:dstpop} can be installed with the {cmd:github} package by E.F. Haghish ({browse "https://github.com/haghish/github":link})
+{cmd:dkconvert} can be installed with the {cmd:github} package by E.F. Haghish ({browse "https://github.com/haghish/github":link})
 
 . net install github, from("https://haghish.github.io/github/")
 . github install andreasebbehoj/dkconvert
+
+Otherwise, the convertion function can be deactivated by the option {opt noconvert}.
 
 
 {title:Remarks}
 
 {pstd}
-For more details on dstpop, including how to update, see {browse "https://github.com/andreasebbehoj/dstpop":the readme.md at GitHub}
+For more details on {cmd:dstpop}, including how to update, see {browse "https://github.com/andreasebbehoj/dstpop":the readme.md at GitHub}
 
 
 {title:Examples}
@@ -90,7 +90,7 @@ Population 2000-2020 by each region
 . dstpop, fy(2000) ty(2020) area(c_reg) clear
 
 Population 1977-1990 in the old municipalities (pre-2007)
-. dstpop, fy(1977) ty(1990) area(c_kom) convert(no) clear
+. dstpop, fy(1977) ty(1990) area(c_kom) noconvert clear
 
 Population 2000-2020 by sex and age
 . dstpop, fy(2000) ty(2020) sex age clear

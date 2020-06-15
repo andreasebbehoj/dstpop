@@ -1,9 +1,9 @@
-*! version 1.0.0 11jun2020
+*! version 1.0.1 15jun2020
 program define dstpop
 version 16.1
 syntax , FYear(real) TYear(real) ///
 	[AREA(string) AGE SEX Quarter(numlist integer)] ///
-	[VALlab(string) CONVert(string) DEBUG CLEAR]
+	[VALlab(string) NOCONVERT DEBUG CLEAR]
 
 *** Check syntax input
 if "`debug'"=="debug" {
@@ -15,7 +15,7 @@ di _n(2) "INPUTS" ///
 	_n "Sex: `sex'" ///
 	_n "Quarter: `quarter'" ///
 	_n "Vallab: `vallab'" ///
-	_n "Convert: `convert'" ///
+	_n "Noconvert: `noconvert'" ///
 	_n "Clear: `clear'" ///
 	_n "Debug: `debug'"
 }
@@ -39,13 +39,9 @@ if inlist("`area'", "", "total", "all", "c_kom", "c_reg")==0 {
 	di as error "Invalid area() option. Specify total (default), all, c_kom, or c_reg"
 	exit
 }
-* Convert
-if inlist("`convert'", "", "no", "yes")==0 {
-	di as error "Invalid convert() option. Specify yes or no (default)"
-	exit
-}
-if "`convert'"=="yes" & inlist("`area'", "c_kom", "c_reg")==0 {
-	di as error "convert(yes) only works when area() is c_kom or c_reg"
+* Convert old municipalities
+if mi("`noconvert'") & "`area'"=="all" {
+	di as error "Convertion of old municipalities does not work with area(all)." _n "Either change area option to area(c_kom|c_reg|total) or specify noconvert option"
 	exit
 }
 * Value or label
@@ -53,8 +49,8 @@ if inlist("`vallab'", "", "code", "value", "both")==0 {
 	di as error "Invalid vallab() option. Specify code (default), value, or both"
 	exit
 }
-if inlist("`vallab'", "value", "both") & inlist("`convert'", "yes", "") {
-	di as error "Invalid combination of vallab() and convert() options." _n "vallab(value|both) only works with convert(no)." _n "Either change vallab to code (recommended) or convert to no"
+if inlist("`vallab'", "value", "both") & "`noconvert'"=="" {
+	di as error "Convertion of old municipalities does not work with vallab(value|both)." _n "Either change value label option to vallab(code) or specify noconvert option"
 	exit
 }
 * q (quarterly population from FOLK1A)
@@ -64,7 +60,7 @@ if !mi("`quarter'"){
 		exit
 	}
 	if inlist("`quarter'", "1", "2", "3", "4", "0")==1 & `fyear'<2008 & `tyear'<2008 {
-		di as error "Invalid q option. Quarterly populations is only available from 2008 and onwards"
+		di as error "Invalid combination of options. Specified quarter(`'quarter'), fyear(`fyear`), and tyear(`'tyear') but quarterly populations are only available since 2008."
 		exit
 	}
 }
@@ -74,10 +70,9 @@ if !mi("`quarter'"){
 if mi("`quarter'") {
 	local quarter = 1
 }
-* Convert
-if mi("`convert'") & inlist("`area'", "c_kom", "c_reg")==1 {
-	local convert = "yes"
-	local textconvert = `"_n _col(5)  "Convert: `convert'" "'
+* Convert (i.e. missing noconvert)
+if mi("`noconvert'") & inlist("`area'", "c_kom", "c_reg")==1 & (`fyear'<2007 | `tyear'<2007) {
+	local textconvert = `"_n _col(5)  "Convert: yes (from old c_kom to post-2007 `area')" "'
 }
 * Vallab
 if mi("`vallab'") {
@@ -95,7 +90,7 @@ if "`debug'"=="debug" {
 		_n "Sex: `sex'" ///
 		_n "Quarter: `quarter'" ///
 		_n "Vallab: `vallab'" ///
-		_n "Convert: `convert'" ///
+		_n "Noconvert: `noconvert'" ///
 		_n "Clear: `clear'" ///
 		_n "Debug: `debug'"
 }
@@ -392,13 +387,11 @@ foreach file of local reg {
 	}
 
 	** Convert area (only BEF1 and BEF1A)
-	if "`convert'"=="yes" {
+	if mi("`noconvert'") {
 		if "`area'"=="c_kom" & inlist("`file'", "BEF1", "BEF1A") {
-			local textconvert = `"_n _col(5) "Convert area: From old c_kom (<2007) to new c_kom"""'
 			qui: dkconvert area, from(oldkom) to(newkom) replace assert
 		}
 		if "`area'"=="c_reg" & inlist("`file'", "BEF1", "BEF1A") {
-			local textconvert = `"_n _col(5) "Convert area: From old c_kom (<2007) to c_reg"""'
 			qui: dkconvert area, from(oldkom) to(region) replace assert
 		}
 
@@ -445,7 +438,7 @@ if "`age'"=="age" & "`vallab'"=="code" {
 }
 
 *** Combine converted area
-if "`convert'"=="yes" {
+if mi("`noconvert'") {
 	qui: ds year area pop, not
 	local bysortlist = "`r(varlist)'"
 	if !mi("`bysortlist'") {

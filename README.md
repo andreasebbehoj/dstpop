@@ -15,12 +15,12 @@ github install andreasebbehoj/dstpop
 ```
 
 ## Syntax
-`dstpop, clear fyear() tyear() [sex] [age] [area(c_kom|c_reg|total)] [convert(yes|no)] [other options]`
+`dstpop, clear fyear() tyear() [sex] [age] [area(c_kom|c_reg|total)] [noconvert] [other options]`
 
-To find detailed documentation and examples, install **dstpop** in Stata and type `help dstpop`.
+For detailed documentation and examples, install **dstpop** in Stata and type `help dstpop`.
 
 ## Dependencies
-**dstpop, convert()**  requires the **dkconvert** and **labutil** packages. Both should be installed automatically with but can otherwise be manually installed in Stata:
+**dstpop**  requires the **dkconvert** and **labutil** packages. Both should be installed automatically with but can otherwise be manually installed in Stata:
 
 ```stata
 ssc install labutil
