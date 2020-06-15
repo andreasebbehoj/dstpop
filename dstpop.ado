@@ -312,7 +312,7 @@ if "`vallab'"=="both" {
 
 *** Download from registries
 tempfile outfile
-qui: save "`outfile'", replace empty
+qui: save `outfile', replace empty
 di _n "Download settings:" ///
 	_n _col(5) "Time: `fyear'-`tyear'" `textquarter' ///
 	_n _col(5) "Registries: `reg'" ///
@@ -340,19 +340,19 @@ foreach file of local reg {
 	if "`debug'"=="debug" {
 		di _n "API call: `url'"
 	}
-	qui: copy "`url'"  "`file'.csv", replace
+	qui: copy "`url'"  "dstpopdebug_`file'.csv", replace
 }
 
 
 *** Import and format files
 foreach file of local reg {
-	qui: import delimited "`file'.csv", clear encoding(UTF-8)
+	qui: import delimited "dstpopdebug_`file'.csv", clear encoding(UTF-8)
 	* Debug
 	if "`debug'"=="debug" {
 		di _n "Import and format `file' (``file'_f'-``file'_t')"
 	}
 	else {
-		qui: erase "`file'.csv"
+		qui: erase "dstpopdebug_`file'.csv"
 	}
 	** Names and labels
 	rename tid year
@@ -417,12 +417,15 @@ foreach file of local reg {
 	tempfile import`file'
 	qui: save `import`file'', replace
 	if "`debug'"=="debug" { //
-		qui: save "`file'.dta", replace
+		qui: save "dstpopdebug_`file'.dta", replace
 	}
-	use "`outfile'", clear
+	if mi("`debug''") { // Remove debug files
+		capture: erase "dstpopdebug_`file'.dta"
+	}
+	use `outfile', clear
 	append using `import`file'', force
 	capture: order year_q, after(year)
-	qui: save "`outfile'", replace
+	qui: save `outfile', replace
 }
 
 
