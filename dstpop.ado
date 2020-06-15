@@ -122,10 +122,10 @@ if `add'>0 {
 		+ "%3E%3D" + "`BEF1_f'" /// >=
 		+ "%3C%3D" + "`BEF1_t'" // <=
 }
-* BEF1A 2003-2004
+* BEF1A 2003-2006
 local add = 0
 forvalues x = `fyear'(1)`tyear' {
-	if inrange(`x', 2003, 2004) {
+	if inrange(`x', 2003, 2006) {
 		local add = `add' + 1
 	}
 }
@@ -137,30 +137,30 @@ if `add'>0 {
 	else {
 		local BEF1A_f = 2003
 	}
-	if `tyear' <=2004 {
+	if `tyear' <=2006 {
 		local BEF1A_t = "`tyear'"
 	}
 	else {
-		local BEF1A_t = 2004
+		local BEF1A_t = 2006
 	}
 	local time_BEF1A = "&Tid=" ///
 		+ "%3E%3D" + "`BEF1A_f'" /// >=
 		+ "%3C%3D" + "`BEF1A_t'" // <=
 }
-* BEF1A07 2005-2007
+* BEF1A07 2007
 local add = 0
 forvalues x = `fyear'(1)`tyear' {
-	if inrange(`x', 2005, 2007) {
+	if inrange(`x', 2007, 2007) {
 		local add = `add' + 1
 	}
 }
 if `add'>0 {
 	local reg = "`reg'" + " BEF1A07"
-	if `fyear' >=2005 {
+	if `fyear' >=2007 {
 		local BEF1A07_f = "`fyear'"
 	}
 	else {
-		local BEF1A07_f = 2005
+		local BEF1A07_f = 2007
 	}
 	if `tyear' <=2007 {
 		local BEF1A07_t = "`tyear'"

@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 1.0.1  15jun2020}{...}
+{* *! version 1.0.2  15jun2020}{...}
 {title:dstpop}
 
 {phang}
@@ -39,7 +39,7 @@
 {synoptline}
 {p2colreset}{...}
 {p 4 6 2} * Old municipalities cannot be converted into new municipalities or regions for {opt val:lab}({it:value}|{it:both}) and {opt area}({it:all}). Either change to {opt val:lab}({it:code}) and {opt area}({it:c_kom}|{it:c_reg}) or specify {opt noconvert} to disable convertion.{p_end}
-{p 4 6 2} ~ Old municipalities and counties are available 1971-2004 and new municipalities and regions are available 2005-2020.{p_end}
+{p 4 6 2} ~ Old municipalities and counties are available 1971-2006 and new municipalities and regions are available 2007-2020.{p_end}
 {p 4 6 2} ^ Quarterly populations are only available since 2008.{p_end}
 
 
@@ -52,7 +52,10 @@
 Population can be total Danish population (default), or by sex, age, area, or a combination of all three.
 
 {pstd}
-DST stores population data in four different registries (BEF1, BEF1A, BEF1A07, and FOLK1A). Each registry cover different time periods and have slightly different data structures, which makes DST's API rather cumbersome to use. Importantly, the Structural Reform ("Kommunalreformen") in 2007 combined the previous 271 municipalities into 98 larger municipalities. At the same time, the 16 administrative counties ("amter") were replaced by 5 regions. Some municipalities continued unchanged, while others were combined and split. This introduce a databreach and some municipalities cannot be directly compared geographically (marked with *).
+DST stores population data in four different registries (BEF1, BEF1A, BEF1A07, and FOLK1A). Each registry cover different time periods and have slightly different data structures, which makes DST's API rather cumbersome to use. Importantly, the Structural Reform ("Kommunalreformen") in 2007 combined the previous 271 municipalities into 98 larger municipalities. At the same time, the 16 administrative counties ("amter") were replaced by 5 regions. Some municipalities continued unchanged, while others were combined and split. This introduce a databreach and some municipalities cannot be directly compared geographically (value labels marked with *).
+
+{pstd}
+Data is from BEF1 (1971-2002), BEF1A (2003-2006), BEF1A07 (2007), and FOLK1A (2008-)
 
 {pstd}
 Data is downloaded using the API provided by Statistics Denmark (DST or "Danmarks Statistik").
