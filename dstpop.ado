@@ -438,7 +438,7 @@ if "`age'"=="age" & "`vallab'"=="code" {
 }
 
 *** Combine converted area
-if mi("`noconvert'") {
+if mi("`noconvert'") & inlist("`area'", "c_reg", "c_kom") & (strpos("`reg'", "BEF1 ") | strpos("`reg'", "BEF1A ")){
 	qui: ds year area pop, not
 	local bysortlist = "`r(varlist)'"
 	if !mi("`bysortlist'") {
