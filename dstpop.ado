@@ -31,7 +31,7 @@ else {
 
 * Time period
 if `fyear'<1971 | mi(`fyear') | `tyear'>2020 | mi(`tyear') {
-	di as error "Invalid f() or t() option (from/to year). Must be 1971-2020"
+	di as error "Invalid fyear() or tyear() option (from/to year). Must be 1971-2020"
 	exit
 }
 * Area
