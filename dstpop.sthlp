@@ -99,7 +99,11 @@ Population 1971-2020 by sex, age, and municipality (large file!)
 . dstpop, fy(1971) ty(2020) sex age area(c_kom) clear
 
 
-{title:Author}
+{title:References}
 
 {pstd}
+The population data is hosted by Statistics Denmark. Documentation on methods, data breaks, the Structural Reform, etc, can be found at {browse "https://www.dst.dk/en/Statistik/dokumentation/documentationofstatistics/the-population":their webpage}.
+
+
+{title:Author}
 Andreas Ebbehoj, MD & PhD student, Aarhus University, Denmark
