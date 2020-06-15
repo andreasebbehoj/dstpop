@@ -60,9 +60,6 @@ Data is from BEF1 (1971-2002), BEF1A (2003-2006), BEF1A07 (2007), and FOLK1A (20
 {pstd}
 Data is downloaded using the API provided by Statistics Denmark (DST or "Danmarks Statistik").
 
-{pstd}
-DST's API is documented {browse "https://www.dst.dk/da/Statistik/statistikbanken/api":here}.
-
 
 {title:Dependencies}
 {cmd:dstpop} requires {cmd:dkconvert} to convert old municipalities.
@@ -106,6 +103,9 @@ Population 1971-2020 by sex, age, and municipality (large file!)
 
 {pstd}
 The population data is hosted by Statistics Denmark. Documentation on methods, data breaks, the Structural Reform, etc, can be found at {browse "https://www.dst.dk/en/Statistik/dokumentation/documentationofstatistics/the-population":their webpage}.
+
+{pstd}
+DST's API is documented {browse "https://www.dst.dk/da/Statistik/statistikbanken/api":here}.
 
 
 {title:Author}
