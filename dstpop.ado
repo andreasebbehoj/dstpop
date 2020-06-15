@@ -419,7 +419,7 @@ foreach file of local reg {
 	if "`debug'"=="debug" { //
 		qui: save "dstpopdebug_`file'.dta", replace
 	}
-	if mi("`debug''") { // Remove debug files
+	if mi("`debug'") { // Remove debug files
 		capture: erase "dstpopdebug_`file'.dta"
 	}
 	use `outfile', clear
