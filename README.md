@@ -8,6 +8,7 @@ This makes it rather time-consuming to get Danish population numbers over a long
 
 The purpose of this package is to enable easy download of the Danish population 1971-2020 with options for downloading population by age, sex, area. The included **dkconvert** package also provide the option of converting old pre-2007 municipalities into new municipalities or regions.
 
+
 ## Installation
 ```stata
 net install github, from("https://haghish.github.io/github/")
@@ -18,6 +19,25 @@ github install andreasebbehoj/dstpop
 `dstpop, clear fyear() tyear() [sex] [age] [area(c_kom|c_reg|total)] [noconvert] [other options]`
 
 For detailed documentation and examples, install **dstpop** in Stata and type `help dstpop`.
+
+OBS!!! Statistics Denmark changed their API the 25th of June 2020. Now you can only download 500.000 cells per standard API call. This means that right now, DSTPOP can only download population for **one year** at a time when both `age`, `area(c_kom|c_reg|total)`, and `sex` options have been specified.
+
+Until a more permanent solution has been developed, the following quick-fix can be use as a workaround:
+```
+tempfile masterfile
+save `masterfile', replace empty
+forvalues xyear=1977(1)2020 {
+  tempfile xyear`xyear'
+  dstpop, clear fyear(`xyear') tyear(`xyear') sex age area(c_kom|c_reg|total)
+  save `xyear`xyear'', replace
+  use `masterfile', clear
+  append using `xyear`xyear''
+  save `masterfile', replace
+}
+use `masterfile', clear
+
+```
+
 
 ## Dependencies
 **dstpop**  requires the **dkconvert** and **labutil** packages. Both should be installed automatically with but can otherwise be manually installed in Stata:

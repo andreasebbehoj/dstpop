@@ -61,6 +61,25 @@ Data is from BEF1 (1971-2002), BEF1A (2003-2006), BEF1A07 (2007), and FOLK1A (20
 Data is downloaded using the API provided by Statistics Denmark (DST or "Danmarks Statistik").
 
 
+OBS!!! Statistics Denmark changed their API the 25th of June 2020. Now you can only download 500.000 cells per standard API call. This means that right now, DSTPOP can only download population for **one year** at a time when both `age`, `area(c_kom|c_reg|total)`, and `sex` options have been specified.
+
+Until a more permanent solution has been developed, the following quick-fix can be use as a workaround:
+
+tempfile masterfile
+save `masterfile', replace empty
+forvalues xyear=1977(1)2020 {
+  tempfile xyear`xyear'
+  dstpop, clear fyear(`xyear') tyear(`xyear') sex age area(c_kom|c_reg|total)
+  save `xyear`xyear'', replace
+  use `masterfile', clear
+  append using `xyear`xyear''
+  save `masterfile', replace
+}
+use `masterfile', clear
+
+
+
+
 {title:Dependencies}
 {cmd:dstpop} requires {cmd:dkconvert} to convert old municipalities.
 
