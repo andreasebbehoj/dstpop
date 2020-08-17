@@ -285,10 +285,10 @@ foreach file of local reg {
 	** Label area (only BEF1A07 and FOLK1A)
 	if mi("`noconvert'") & inlist("`area'", "c_kom", "c_reg") & inlist("`file'", "BEF1A07", "FOLK1A")  {
 		if "`area'"=="c_kom" {
-			qui: dkconvert area, label(newkom) assert
+			qui: dkconvert area, from(newkom) labelonly assert
 		}
 		if "`area'"=="c_reg" {
-			qui: dkconvert area, label(region) assert
+			qui: dkconvert area, from(region) labelonly assert
 		}
 	}
 	
