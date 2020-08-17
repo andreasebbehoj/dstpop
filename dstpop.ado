@@ -336,8 +336,8 @@ foreach file of local reg {
 	if mi("`debug'") { // Remove debug files
 		capture: erase "dstpopdebug_`file'.dta"
 	}
-	use `outfile', clear
-	append using `import`file'', force
+	qui: use `outfile', clear
+	qui: append using `import`file'', force
 	capture: order quarter, after(year)
 	qui: save `outfile', replace
 }
@@ -362,7 +362,7 @@ if "`sex'"=="sex" {
 	qui: label value sex sex_
 }
 
-if "`maritalstatus'"=="maritalstatus" {
+if "`maritalstatus'"=="maritalstatus" & mi("`noconvert'") {
 	qui: label define maritalstatus_ 1 "Unmarried" 2 "Married/separated" 3 "Widow/widower" 4 "Divorced", replace
 	qui: label value maritalstatus maritalstatus_
 }
