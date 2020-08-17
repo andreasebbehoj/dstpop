@@ -1,12 +1,12 @@
 # dstpop
- Stata program for importing the Danish population by year, sex, age, and area, using Statistics Denmark's API.
+ Stata program for importing the Danish population by year, area, sex, age, and marital status, using Statistics Denmark's API.
 
 ## Introduction
-Statistics Denmark (DST or "Danmarks Statistic") offer a free and open API for downloading public data, including the Danish population since 1971. The population is available in total or by sex, age, and area. Due to different data breaches, population data is stored in several registries (BEF1, BEF1A, BEF1A07, and FOLK1A) with slightly different data structures.
+Statistics Denmark (DST or "Danmarks Statistic") offer a free and open API for downloading public data, including the Danish population since 1971. The population is available in total, by area, sex, age, or marital status, or by a combination of those. Due to different data breaches, population data is stored in several registries (BEF1, BEF1A, BEF1A07, and FOLK1A) with slightly different data structures.
 
 This makes it rather time-consuming to get Danish population numbers over a long time period. Also, due to the Structural Reform ("Kommunalreformen") in 2007, the 298 old municipalities were combined into 98 new municipalities, making the process even more cumbersome.
 
-The purpose of this package is to enable easy download of the Danish population 1971-2020 with options for downloading population by age, sex, area. The included **dkconvert** package also provide the option of converting old pre-2007 municipalities into new municipalities or regions.
+The purpose of this package is to enable easy download of the Danish population 1971-2020 with options for downloading population by area, sex, age, and marital status. The included **dkconvert** package also provide the option of converting old pre-2007 municipalities into new municipalities or regions.
 
 
 ## Installation
@@ -16,27 +16,9 @@ github install andreasebbehoj/dstpop
 ```
 
 ## Syntax
-`dstpop, clear fyear() tyear() [sex] [age] [area(c_kom|c_reg|total)] [noconvert] [other options]`
+`dstpop, clear year(numlist) [area(c_kom|c_reg|total)] [sex] [age] [maritalstatus] [noconvert] [other options]`
 
 For detailed documentation and examples, install **dstpop** in Stata and type `help dstpop`.
-
-OBS!!! Statistics Denmark changed their API the 25th of June 2020. Now you can only download 500.000 cells per standard API call. This means that right now, DSTPOP can only download population for **one year** at a time when both `age`, `area(c_kom|c_reg|total)`, and `sex` options have been specified.
-
-Until a more permanent solution has been developed, the following quick-fix can be use as a workaround:
-```
-tempfile masterfile
-save `masterfile', replace empty
-forvalues xyear=1977(1)2020 {
-  tempfile xyear`xyear'
-  dstpop, clear fyear(`xyear') tyear(`xyear') sex age area(c_kom|c_reg|total)
-  save `xyear`xyear'', replace
-  use `masterfile', clear
-  append using `xyear`xyear''
-  save `masterfile', replace
-}
-use `masterfile', clear
-
-```
 
 
 ## Dependencies

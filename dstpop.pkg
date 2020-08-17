@@ -1,9 +1,13 @@
-v 1.0.2
-d 'DSTPOP': Import Danish population by year, sex, age, and area, using Statistics Denmark's API
+v 1.1.0
+d 'DSTPOP': Import Danish population by year, area, sex, age, and marital status, using Statistics Denmark's API
 d
-d Distribution-Date 20200615
+d Distribution-Date 20200817
 d License: MIT
 d
 F dstpop.ado
+F dstpop_BEF1.ado
+F dstpop_BEF1A.ado
+F dstpop_BEF1A07.ado
+F dstpop_FOLK1A.ado
 F dstpop.pkg
 F dstpop.sthlp

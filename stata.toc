@@ -1,4 +1,4 @@
-v 1.0.2
+v 1.1.0
 d dstpop
 d by Andreas Ebbehoj
 d Aarhus University
@@ -6,6 +6,6 @@ d andebb@clin.au.dk
 d Find documentation at:
 l https://github.com/andreasebbehoj/dstpop
 
-d 'dstpop': Import Danish population by year, sex, age, and area, using Statistics Denmark's API
+d 'dstpop': Import Danish population by year, area, sex, age, and marital status, using Statistics Denmark's API
 
 p dstpop
